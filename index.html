@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Adaptive Learning Platform</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #e0f7fa, #f1f8e9);
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+      background: #00796b;
+      color: white;
+      margin: 0;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: white;
+      transition: transform 0.2s;
+    }
+    .section:hover {
+      transform: translateY(-4px);
+    }
+    h2 {
+      color: #00796b;
+      margin-top: 0;
+    }
+    button {
+      padding: 10px 16px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #0288d1;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0277bd;
+    }
+    input[type="file"], textarea {
+      margin-top: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      resize: vertical;
+    }
+    pre {
+      background: #f9fbe7;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📚 Adaptive Learning Platform</h1>
+
+  <div class="container">
+
+    <!-- Upload -->
+    <div class="section">
+      <h2>📂 Upload Study Material</h2>
+      <input type="file" id="fileInput" />
+      <button onclick="uploadFile()">Upload</button>
+      <pre id="uploadResult"></pre>
+    </div>
+
+    <!-- Quiz -->
+    <div class="section">
+      <h2>📝 Generate Quiz</h2>
+      <textarea id="studyText" rows="4" placeholder="Paste study text here..."></textarea><br/>
+      <button onclick="generateQuiz()">Generate Quiz</button>
+      <pre id="quizResult"></pre>
+    </div>
+
+    <!-- Progress -->
+    <div class="section">
+      <h2>📊 Progress Analytics</h2>
+      <button onclick="getProgress()">View My Progress</button>
+      <pre id="progressResult"></pre>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="section">
+      <h2>🤖 AI Study Recommendations</h2>
+      <button onclick="getRecommendations()">Get Recommendations</button>
+      <pre id="recResult"></pre>
+    </div>
+
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const fileInput = document.getElementById("fileInput").files[0];
+      const formData = new FormData();
+      formData.append("file", fileInput);
+
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      document.getElementById("uploadResult").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function generateQuiz() {
+      const text = document.getElementById("studyText").value;
+      const res = await fetch("/api/generate-quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      document.getElementById("quizResult").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getProgress() {
+      const res = await fetch("/api/progress/user1");
+      document.getElementById("progressResult").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+
+    async function getRecommendations() {
+      const res = await fetch("/api/recommendations/user1");
+      document.getElementById("recResult").textContent = JSON.stringify(await res.json(), null, 2);
+    }
+  </script>
+</body>
+</html>
